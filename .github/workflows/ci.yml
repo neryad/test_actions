@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -24,6 +24,7 @@ jobs:
       - run: flutter pub get
       - run: flutter --version
       - run: flutter analyze
+      - run: flutter test
 
   build_iOSApp:
     name: Build Flutter App (iOS)
@@ -31,7 +32,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -40,8 +41,8 @@ jobs:
           channel: 'stable'
       - run: flutter pub get
       - run: flutter clean
-      - run: flutter build ios --no-codesign
       - run: |
+          flutter build ios --no-codesign
           cd build/ios/iphoneos
           mkdir Payload
           cd Payload
@@ -55,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -70,129 +71,3 @@ jobs:
           artifacts: "build/app/outputs/apk/debug/*"
           tag: v1.0.${{ github.run_number}}
           token: ${{ secrets.TOKEN}}
-
-  build_Web:
-    name: Build Web and Zip
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-      - run: flutter config --enable-web
-      - run: flutter pub get
-      - run: flutter build web --release
-
-      - name: Archive Web Build
-        uses: actions/upload-artifact@v2
-        with:
-          name: web-build
-          path: build/web/
-
-      - name: Zip Web Build
-        run: |
-          cd build
-          zip -r web-build.zip web
-
-
-
-
-
-# name: CI
-
-# on:
-#   push:
-#     branches:
-#       - master
-#   pull_request:
-#     branches:
-#       - master
-
-# jobs:
-#   flutter_test:
-#     name: Run Flutter Test
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#       - uses: actions/setup-java@v3
-#         with:
-#           distribution: 'temurin'
-#           java-version: '17'
-#       - uses: subosito/flutter-action@v2
-#         with:
-#           channel: 'stable'
-#       - run: flutter pub get
-#       - run: flutter --version
-#       - run: flutter analyze
-
-
-#   build_iOSApp:
-#     name: Build Flutter App (iOS)
-#     needs: [flutter_test]
-#     runs-on: macos-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#       - uses: actions/setup-java@v3
-#         with:
-#           distribution: 'temurin'
-#           java-version: '17'
-#       - uses: subosito/flutter-action@v2
-#         with:
-#           channel: 'stable'
-#       - run: flutter pub get
-#       - run: flutter clean
-#       - run: |
-#           flutter build ios --no-codesign
-#           cd build/ios/iphoneos
-#           mkdir Payload
-#           cd Payload
-#           ln -s ../Runner.app
-#           cd ..
-#           zip -r app.ipa Payload
-
-#   build_androidApk:
-#     name: Build Flutter App (Android)
-#     needs: [flutter_test]
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#       - uses: actions/setup-java@v3
-#         with:
-#           distribution: 'temurin'
-#           java-version: '17'
-#       - uses: subosito/flutter-action@v2
-#         with:
-#           channel: 'stable'
-#       - run: flutter pub get
-#       - run: flutter clean
-#       - run: flutter build apk --debug
-#       - uses: ncipollo/release-action@v1
-#         with:
-#           artifacts: "build/app/outputs/apk/debug/*"
-#           tag: v1.0.${{ github.run_number}}
-#           token: ${{ secrets.TOKEN}}
-
-#   build_Web:
-#     name: Build Web and Zip
-#     env:
-#       my_secret: ${{ secrets.commit_secret }}
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#       - uses: subosito/flutter-action@v1
-#         with:
-#           channel: 'stable'
-#       - run: flutter config --enable-web
-#       - run: flutter pub get
-#       - run: flutter build web --release
-
-#       - name: Archive Web Build
-#         uses: actions/upload-artifact@v2
-#         with:
-#           name: web-build
-#           path: build/web/
-
-#       - name: Zip Web Build
-#         run: |
-#           cd build
-#           zip -r web-build.zip web
