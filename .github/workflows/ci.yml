@@ -110,7 +110,7 @@ jobs:
       - run: flutter clean
       - run: flutter build windows
       - name: Archive Windows Build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: windows-build
           path: build/windows
