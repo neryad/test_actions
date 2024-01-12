@@ -89,7 +89,7 @@ jobs:
       - run: flutter clean
       - run: flutter build web
       - name: Archive Web Build
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: web-build
           path: build/web
